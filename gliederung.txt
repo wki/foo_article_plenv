@@ -1,0 +1,16 @@
+* Vorbild: rbenv
+  - beliebig viele ruby Installationen
+  - zentraler Versions-Schalter
+  - lokal veränderbar durch Environment-Einstellung
+  - plugins
+  
+* Unsetzung: plenv
+  - Installation, Vorbereitung
+  - Perl compilieren
+  - welches Perl -- wann?
+  - Unterschiede zu rbenv
+    -- (noch) keine Plugins
+  
+* Abgrenzung zu perlbrew
+  + perlbrew: libs, self-upgrade, exec
+  + plenv: einfache Umschaltbarkeit
