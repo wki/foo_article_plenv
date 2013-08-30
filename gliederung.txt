@@ -9,8 +9,15 @@
   - Perl compilieren
   - welches Perl -- wann?
   - Unterschiede zu rbenv
-    -- (noch) keine Plugins
+    -- (noch) keine Plugins (Anmerkung reb: Es gibt Plugins wie z.B. plenv-contrib und perl-build)
   
 * Abgrenzung zu perlbrew
   + perlbrew: libs, self-upgrade, exec
   + plenv: einfache Umschaltbarkeit
+    -- libs, exec über plenv-contrib
+    -- plenv ist bash, perlbrew über cpan installierbar
+    -- cpanm-Unterstützung (automatischer "rehash")
+
+* Sonstiges zu plenv
+  + Chef cookbook
+  + Rex?
