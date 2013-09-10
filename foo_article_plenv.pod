@@ -1,0 +1,14 @@
+=encoding utf-8
+=head1 plenv -- eine ALternative zu perlbrew
+
+=head2 Ursprung
+
+Sich die Lieblings-Programmiersprache lokal zu installieren ist inzwischen eine gewisse Mode geworden. Gründe dafür können nicht vorhandene Administrator-Berechtigungen, hohe Flexibilität oder die Einfahkeit eines solchen Unterfangens sein.
+
+Wir kennen alle Perlbrew als eine Möglichkeit, Perl lokal zu installieren. Aus der Ruby Welt hat das dort verbreitete "rbenv" L<http://rbenv.org> inzwischen einen Nachahmer bei Perl gefunden. Macht es Sinn, über diese Alternative nachzudenken? Wir gehen dem auf den Grund.
+
+-- Beschreibung der shims
+-- hashing
+-- Steuer-Mechanismus für Ruby Version
+-- Plugins
+
