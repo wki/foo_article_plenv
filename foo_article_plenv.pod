@@ -90,6 +90,10 @@ Verschiedene Perl Versionen zu installieren ist relativ einfach
     The `cpanm' command exists in these Perl versions:
       5.18.1
 
+Kennt man den Namen eines ausführbaren Kommandos, kann man schnell herausfinden, bei welchen Perl Versionen es zur Verfügung steht:
 
+    $ plenv whence cpanm
+    5.14.4
+    5.18.1
 
 
