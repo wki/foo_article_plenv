@@ -7,8 +7,89 @@ Sich die Lieblings-Programmiersprache lokal zu installieren ist inzwischen eine 
 
 Wir kennen alle Perlbrew als eine Möglichkeit, Perl lokal zu installieren. Aus der Ruby Welt hat das dort verbreitete "rbenv" L<http://rbenv.org> inzwischen einen Nachahmer bei Perl gefunden. Macht es Sinn, über diese Alternative nachzudenken? Wir gehen dem auf den Grund.
 
--- Beschreibung der shims
--- hashing
--- Steuer-Mechanismus für Ruby Version
--- Plugins
+=head2 Funktionsweise
+
+Genau wie beim Ruby Vorbild wird der Suchpfad für ausführbare Kommandos für eine Shell lediglich einmal gesetzt, nachdem C<plenv> aktiviert wurde. Innerhalb des Verzeichnisses, in dem C<plenv> installiert wurde, existieren zwei Unterverzeichnisse für Binär-Dateien: F<bin> für C<plenv> und F<shims> für alle zu einem bestimmten Perl gehörenden oder dazu installierten Kommandos.
+
+Die Dateien im F<shims> Verzeichnis sind alle via Hard-Link mit dem selben Shell-Script verbunden. Dieses löst prinzipiell das nachfolgende Kommando aus:
+
+    plenv exec "gewünschtes Programm" argumente...
+
+Ein dadurch aktiviertes Shell Script findet die gewünschte Perl Version, setzt temporär den Suchpfad entsprechend und startet das passende Kommando.
+
+Jedes mal wenn ein neues Perl oder neue Distributionen mit ausführbaren Kommandos installiert wird, muß die Liste der Kommandos im F<shim> Verzeichnis aktualisiert werden. Das erfolgt normalerweise automatisch, kann aber im Bedarfsfall manuell mit dem C<plenv rehash> Befehl angestoßen werden.
+
+=head2 Auswahl der gewünschten Version
+
+Ebenfalls gemäß dem Vorbild von Ruby stehen mehrere Mechanismen mit aufsteigender Priorität zur Verfügung, mittels derer die auszuführende Perl Version gewählt wird: ein globaler Schalter, innerhalb von Verzeichnissen liegende magische Dateien sowie die Environment Variable C<PLENV_VERSION>.
+
+=head2 Plugins
+
+### TODO: fehlt noch
+
+=head2 Installation
+
+Leider ist plenv noch nicht als CPAN Distribution verfügbar, insofern muß man sich aus dem Repository des Autors bedienen. Aber die Installation ist relativ einfach. Nachfolgend die auszuführenden Befehle, die bis zum Verlassen der Shell gelten. Optimalerweise stehen solche Anweisungen in der Start-Datei der Shell.
+    
+    # nach ~/.plenv auschecken (Verzeichnis wird dabei mit angelegt)
+    $ git clone https://github.com/tokuhirom/plenv.git ~/.plenv
+    
+    # Suchpfad erweitern
+    $ export PATH="$HOME/.plenv/bin:$PATH"
+    
+    # Auto-Vervollständigung und Shims aktivieren
+    $ eval "$(plenv init -)"
+
+Nun steht plenv prinzipiell bereit, allerdings erleben wir gleich die erste Überraschung.
+
+    $ plenv install 5.18.1
+    plenv: Please install perl-build.
+    See https://github.com/tokuhirom/plenv/blob/master/README.md#installation
+
+Na gut, dann folgen wir den Anweisungen:
+
+    $ git clone git://github.com/tokuhirom/Perl-Build.git \
+        ~/.plenv/plugins/perl-build/
+    
+    $ plenv install 5.18.1
+    Fetching 5.18.1 as /home/wolfgang/.plenv/cache/perl-5.18.1.tar.gz
+
+Na also -- geht doch! Dann sorgen wir für die richtige Spielwiese:
+
+=head2 Perl Versionen installieren
+
+Verschiedene Perl Versionen zu installieren ist relativ einfach
+
+    # Auflisten aller verfügbaren Perl Versionen dank Vervollständigung:
+    $ plenv install (tab)(tab)
+    
+    # installieren einer ausgewählten Version
+    $ plenv install 5.16.3
+    $ plenv install 5.14.4
+
+    # Auflisten aller installierten:
+    $ plenv versions
+      * system
+        5.16.3
+        5.18.1
+    
+    # globales Auswählen einer Version
+    $ plenv global 5.18.1
+    
+    $ perl -v
+    This is perl 5, version 18, subversion 1 ...
+    
+    # cpanm installieren (für das aktuelle Perl)
+    $ plenv install-cpanm
+    
+    $ plenv global 5.16.3
+    $ cpanm --help
+    
+    plenv: cpanm: command not found
+    
+    The `cpanm' command exists in these Perl versions:
+      5.18.1
+
+
+
 
