@@ -78,8 +78,9 @@ Verschiedene Perl Versionen zu installieren ist relativ einfach
     
     $ perl -v
     This is perl 5, version 18, subversion 1 ...
-    
-    # cpanm installieren (für das aktuelle Perl)
+
+Wer gerne mit C<cpanm> Distributionen installiert, wird sich über diesen einfachen Weg, es zu installieren freuen. Leider muß man diesen Schritt für jedes installierte Perl einmal wiederholen.
+
     $ plenv install-cpanm
     
     $ plenv global 5.16.3
