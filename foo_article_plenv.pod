@@ -97,4 +97,58 @@ Kennt man den Namen eines ausführbaren Kommandos, kann man schnell herausfinden
     5.14.4
     5.18.1
 
+=head2 Umgang mit verschiedenen Perl Versionen
 
+Wie oben schon erwähnt, stehen drei unterschiedlich prior behandelte Möglichkeiten zum Umschalten auf eine andere Perl Version zur Verfügung. Die jeweils zu verwendende Version wir hierbei in einer Datei F<version> innerhalb des Plenv-Verzeichnisses festgehalten.
+
+    $ plenv global 5.18.1
+    $ perl -v
+    This is perl 5, version 18, subversion 1
+    $ plenv version
+    5.18.1 (set by /home/wolfgang/.plenv/version)
+    $ cat ~/.plenv/version
+    5.18.1
+
+Sehr praktisch ist die vom Ruby Vorbild übernommene Funktionalität, die gestattet je Verzeichnis festzulegen, welche Perl Version innerhalb dieses Verzeichnisses zu wählen ist. Zu beachten ist dabei, daß dieses Verzeichnis (oder ein darunter liegendes) das aktuelle Verzeichnis sein muß! Es genügt nicht, ein ausführbares Kommando innerhalb eines solchen Verzeichnisses auszuführen!
+
+    $ mkdir -p projekte
+    $ cd projekte
+    $ plenv version
+    5.18.1 (set by /home/wolfgang/.plenv/version)
+    $ plenv local 5.14.4
+    $ plenv version
+    5.14.4 (set by /home/wolfgang/projekte/.perl-version)
+    $ cd ..
+    $ plenv version
+    5.18.1 (set by /home/wolfgang/.plenv/version)
+
+=head3 Umschaltung in Server Umgebungen
+
+Will man die Vorzüge der Umschaltung einer Perl Version in Cron-Umgebungen oder init.d Scripten kommen, braucht man lediglich das passende ausführbare Kommando im F<shims> Verzeichnis von plenv anzugeben. Da es sich bei allen shim-Kommandos um Shell-Scripte handelt, die über die Versions-Umschalt-Mechanismen das passende Kommando in der gewünchten Perl Version finden, bekommt man die passende Perl Version automatisch Serviert.
+
+Damit reduziert sich der Aufwand bei z.B. Cron-Scripten auf eine dieser Möglichkeiten:
+
+    # nichts tun, die globale Perl Version ist korrekt gesetzt (hoffentlich)
+    ~/pfad/zu/plenv/shims/kommando
+    
+    # ODER: zu einem passenden Verzeichnis wechseln
+    cd /web/data/www.website.de/app
+    ~/pfad/zu/plenv/shims/kommando
+    
+    # ODER: per Environment-Variable das passende Perl wählen
+    export PLENV_VERSION=5.16.3
+    ~/pfad/zu/plenv/shims/kommando
+
+=head2 Unterschiede zu Perlbrew
+
+Während plenv lediglich zwischen Perl Versionen unterscheidet, bietet Perlbrew die Möglichkeit mittels C<perlbrew lib> je installiertem Perl mehrere Verzeichnise zur Aufnahme unterschiedlicher Distributionen zu verwalten. Eine solche "lib" verhält sich von der Umschaltung her wie eine eigene Perl Version. So könnte man Projekt- oder Kundenspezifische Installationen perlbrew-intern sammeln. Plenv bietet solch einen Komfort nicht, allerdings ist die Installation von Distributionen in eigene Verzeichnisse und das korrekte Setzen der C<PERL5LIB> Environment Variable nicht dramatisch.
+
+Die Umschaltung zwischen Perl Versionen kann bei Perlbrew zwar temporär mit C<perlbrew use> für die aktuelle Shell vorgenommen werden, eine Automatik wie bei plenv gibt es hier leider nicht.
+
+Perlbrew bietet mit dem C<exec> Befehl die Möglichkeit, ein und das selbe Kommando mit jeder installierten Perl Version auszuführen. Für Tests oder Benchmarks können solche Kleinigkeiten sehr angenehm sein.
+
+Die Installation von C<cpanm> bieten beide Kandidaten, plenv installiert im aktuellen Perl, Perlbrew installiert an zentraler Stelle.
+
+Perlbrew bietet einen self-upgrade, der bei plenv fehlt.
+
+Plenv erlaubt die Suche nach ausführbaren Kommandos und liefert mit C<plenv whence> die Liste aller Perls, die dieses Kommando kennen, Perlbrew kennt solch eine Option nicht.
