@@ -1,15 +1,15 @@
 =encoding utf-8
-=head1 plenv -- eine ALternative zu perlbrew
+=head1 plenv -- eine Alternative zu perlbrew
 
 =head2 Ursprung
 
-Sich die Lieblings-Programmiersprache lokal zu installieren ist inzwischen eine gewisse Mode geworden. Gründe dafür können nicht vorhandene Administrator-Berechtigungen, hohe Flexibilität oder die Einfahkeit eines solchen Unterfangens sein.
+Sich die Lieblings-Programmiersprache lokal zu installieren ist inzwischen eine gewisse Mode geworden. Gründe dafür können nicht vorhandene Administrator-Berechtigungen, hohe Flexibilität oder die Einfachkeit eines solchen Unterfangens sein.
 
-Wir kennen alle Perlbrew als eine Möglichkeit, Perl lokal zu installieren. Aus der Ruby Welt hat das dort verbreitete "rbenv" L<http://rbenv.org> inzwischen einen Nachahmer bei Perl gefunden. Macht es Sinn, über diese Alternative nachzudenken? Wir gehen dem auf den Grund.
+Wir kennen alle I<perlbrew> als eine Möglichkeit, Perl lokal zu installieren. Aus der Ruby Welt hat das dort verbreitete I<rbenv> L<http://rbenv.org> inzwischen einen Nachahmer bei Perl gefunden. Macht es Sinn, über diese Alternative nachzudenken? Wir gehen dem auf den Grund.
 
 =head2 Funktionsweise
 
-Genau wie beim Ruby Vorbild wird der Suchpfad für ausführbare Kommandos für eine Shell lediglich einmal gesetzt, nachdem C<plenv> aktiviert wurde. Innerhalb des Verzeichnisses, in dem C<plenv> installiert wurde, existieren zwei Unterverzeichnisse für Binär-Dateien: F<bin> für C<plenv> und F<shims> für alle zu einem bestimmten Perl gehörenden oder dazu installierten Kommandos.
+Genau wie beim Ruby-Vorbild wird der Suchpfad für ausführbare Kommandos für eine Shell lediglich einmal gesetzt, nachdem C<plenv> aktiviert wurde. Innerhalb des Verzeichnisses, in dem C<plenv> installiert wurde, existieren zwei Unterverzeichnisse für Binär-Dateien: F<bin> für C<plenv> und F<shims> für alle zu einem bestimmten Perl gehörenden oder dazu installierten Kommandos.
 
 Die Dateien im F<shims> Verzeichnis sind alle via Hard-Link mit dem selben Shell-Script verbunden. Dieses löst prinzipiell das nachfolgende Kommando aus:
 
@@ -17,7 +17,7 @@ Die Dateien im F<shims> Verzeichnis sind alle via Hard-Link mit dem selben Shell
 
 Ein dadurch aktiviertes Shell Script findet die gewünschte Perl Version, setzt temporär den Suchpfad entsprechend und startet das passende Kommando.
 
-Jedes mal wenn ein neues Perl oder neue Distributionen mit ausführbaren Kommandos installiert wird, muß die Liste der Kommandos im F<shim> Verzeichnis aktualisiert werden. Das erfolgt normalerweise automatisch, kann aber im Bedarfsfall manuell mit dem C<plenv rehash> Befehl angestoßen werden.
+Jedes mal wenn ein neues Perl oder neue Distributionen mit ausführbaren Kommandos installiert wird, muss die Liste der Kommandos im F<shim> Verzeichnis aktualisiert werden. Das erfolgt normalerweise automatisch, kann aber im Bedarfsfall manuell mit dem C<plenv rehash> Befehl angestoßen werden.
 
 =head2 Auswahl der gewünschten Version
 
@@ -29,7 +29,7 @@ Ebenfalls gemäß dem Vorbild von Ruby stehen mehrere Mechanismen mit aufsteigen
 
 =head2 Installation
 
-Leider ist plenv noch nicht als CPAN Distribution verfügbar, insofern muß man sich aus dem Repository des Autors bedienen. Aber die Installation ist relativ einfach. Nachfolgend die auszuführenden Befehle, die bis zum Verlassen der Shell gelten. Optimalerweise stehen solche Anweisungen in der Start-Datei der Shell.
+Leider ist C<plenv> noch nicht als CPAN Distribution verfügbar, insofern muss man sich aus dem Repository des Autors bedienen. Aber die Installation ist relativ einfach. Nachfolgend die auszuführenden Befehle, die bis zum Verlassen der Shell gelten. Optimalerweise stehen solche Anweisungen in der Start-Datei der Shell.
     
     # nach ~/.plenv auschecken (Verzeichnis wird dabei mit angelegt)
     $ git clone https://github.com/tokuhirom/plenv.git ~/.plenv
@@ -79,7 +79,7 @@ Verschiedene Perl Versionen zu installieren ist relativ einfach
     $ perl -v
     This is perl 5, version 18, subversion 1 ...
 
-Wer gerne mit C<cpanm> Distributionen installiert, wird sich über diesen einfachen Weg, es zu installieren freuen. Leider muß man diesen Schritt für jedes installierte Perl einmal wiederholen.
+Wer gerne mit C<cpanm> Distributionen installiert, wird sich über diesen einfachen Weg, es zu installieren freuen. Leider muss man diesen Schritt für jedes installierte Perl einmal wiederholen.
 
     $ plenv install-cpanm
     
@@ -109,7 +109,7 @@ Wie oben schon erwähnt, stehen drei unterschiedlich prior behandelte Möglichke
     $ cat ~/.plenv/version
     5.18.1
 
-Sehr praktisch ist die vom Ruby Vorbild übernommene Funktionalität, die gestattet je Verzeichnis festzulegen, welche Perl Version innerhalb dieses Verzeichnisses zu wählen ist. Zu beachten ist dabei, daß dieses Verzeichnis (oder ein darunter liegendes) das aktuelle Verzeichnis sein muß! Es genügt nicht, ein ausführbares Kommando innerhalb eines solchen Verzeichnisses auszuführen!
+Sehr praktisch ist die vom Ruby-Vorbild übernommene Funktionalität, die gestattet je Verzeichnis festzulegen, welche Perl Version innerhalb dieses Verzeichnisses zu wählen ist. Zu beachten ist dabei, dass dieses Verzeichnis (oder ein darunter liegendes) das aktuelle Verzeichnis sein muss! Es genügt nicht, ein ausführbares Kommando innerhalb eines solchen Verzeichnisses auszuführen!
 
     $ mkdir -p projekte
     $ cd projekte
@@ -141,9 +141,9 @@ Damit reduziert sich der Aufwand bei z.B. Cron-Scripten auf eine dieser Möglich
 
 =head2 Unterschiede zu Perlbrew
 
-Während plenv lediglich zwischen Perl Versionen unterscheidet, bietet Perlbrew die Möglichkeit mittels C<perlbrew lib> je installiertem Perl mehrere Verzeichnise zur Aufnahme unterschiedlicher Distributionen zu verwalten. Eine solche "lib" verhält sich von der Umschaltung her wie eine eigene Perl Version. So könnte man Projekt- oder Kundenspezifische Installationen perlbrew-intern sammeln. Plenv bietet solch einen Komfort nicht, allerdings ist die Installation von Distributionen in eigene Verzeichnisse und das korrekte Setzen der C<PERL5LIB> Environment Variable nicht dramatisch.
+Während C<plenv> lediglich zwischen Perl Versionen unterscheidet, bietet Perlbrew die Möglichkeit mittels C<perlbrew lib> je installiertem Perl mehrere Verzeichnisse zur Aufnahme unterschiedlicher Distributionen zu verwalten. Eine solche I<lib> verhält sich von der Umschaltung her wie eine eigene Perl Version. So könnte man Projekt- oder Kundenspezifische Installationen perlbrew-intern sammeln. Plenv bietet solch einen Komfort nicht, allerdings ist die Installation von Distributionen in eigene Verzeichnisse und das korrekte Setzen der C<PERL5LIB> Environment Variable nicht dramatisch.
 
-Die Umschaltung zwischen Perl Versionen kann bei Perlbrew zwar temporär mit C<perlbrew use> für die aktuelle Shell vorgenommen werden, eine Automatik wie bei plenv gibt es hier leider nicht.
+Die Umschaltung zwischen Perl Versionen kann bei perlbrew zwar temporär mit C<perlbrew use> für die aktuelle Shell vorgenommen werden, eine Automatik wie bei plenv gibt es hier leider nicht.
 
 Perlbrew bietet mit dem C<exec> Befehl die Möglichkeit, ein und das selbe Kommando mit jeder installierten Perl Version auszuführen. Für Tests oder Benchmarks können solche Kleinigkeiten sehr angenehm sein.
 
