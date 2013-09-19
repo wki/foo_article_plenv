@@ -24,14 +24,10 @@ Jedesmal wenn ein neues Perl oder neue Distributionen mit ausführbaren Kommando
 
 Ebenfalls gemäß dem Vorbild von Ruby stehen mehrere Mechanismen mit aufsteigender Priorität zur Verfügung, mittels derer die auszuführende Perl-Version gewählt wird: ein globaler Schalter, innerhalb von Verzeichnissen liegende magische Dateien sowie die Umgebungsvariable C<PLENV_VERSION>.
 
-=head2 Plugins
-
-### TODO: fehlt noch
-
 =head2 Installation
 
 Leider ist C<plenv> noch nicht als CPAN Distribution verfügbar, insofern muss man sich aus dem GitHub-Repository des Autors bedienen. Aber die Installation ist relativ einfach. Nachfolgend die auszuführenden Befehle, die bis zum Verlassen der Shell gelten. Optimalerweise stehen solche Anweisungen in der Start-Datei der Shell.
-    
+
     # nach ~/.plenv auschecken (Verzeichnis wird dabei mit angelegt)
     $ git clone https://github.com/tokuhirom/plenv.git ~/.plenv
     
@@ -67,7 +63,7 @@ Verschiedene Perl Versionen zu installieren ist relativ einfach
     # installieren einer ausgewählten Version
     $ plenv install 5.16.3
     $ plenv install 5.14.4
-
+  
     # Auflisten aller installierten:
     $ plenv versions
       * system
@@ -123,6 +119,27 @@ Sehr praktisch ist die vom Ruby-Vorbild übernommene Funktionalität, die gestat
     $ plenv version
     5.18.1 (set by /home/wolfgang/.plenv/version)
 
+Mit dem Aufruf des Skripts direkt mit C<perl> oder mit C<#!/usr/bin/env perl> in der Shebang kann ein Perl-Skript aus jedem beliebigen Verzeichnis heraus aufgerufen werden und es wird mit dem "richtigen" Perl ausgeführt:
+
+    $ mkdir 5181
+    $ cd 5181/
+    $ cat version.pl
+    #! /usr/bin/env perl
+    print $],"\n";
+    $ perl version.pl 
+    5.014002
+    $ cat .perl-version
+    5.18.1
+    $ perl version.pl 
+    5.018001
+    $ cd ..
+    $ perl 5181/version.pl 
+    5.018001
+    $ perl version.pl 
+    5.014002
+    $ ./5181/version.pl 
+    5.018001
+
 =head3 Umschaltung in Server Umgebungen
 
 Will man die Vorzüge der Umschaltung einer Perl-Version in Cron-Umgebungen oder I<init.d> Scripten kommen, braucht man lediglich das passende ausführbare Kommando im F<shims> Verzeichnis von plenv anzugeben. Da es sich bei allen shim-Kommandos um Shell-Scripte handelt, die über die Versions-Umschaltmechanismen das passende Kommando in der gewünchten Perl-Version finden, bekommt man die passende Perl-Version automatisch serviert.
@@ -148,8 +165,85 @@ Die Umschaltung zwischen Perl-Versionen kann bei perlbrew zwar temporär mit C<p
 
 Perlbrew bietet mit dem C<exec> Befehl die Möglichkeit, ein und das selbe Kommando mit jeder installierten Perl Version auszuführen. Für Tests oder Benchmarks können solche Kleinigkeiten sehr angenehm sein.
 
-Die Installation von C<cpanm> bieten beide Kandidaten, plenv installiert im aktuellen Perl, Perlbrew installiert an zentraler Stelle.
+Die Installation von C<cpanm> bieten beide Kandidaten, plenv installiert im aktuellen Perl, perlbrew installiert an zentraler Stelle.
 
 Perlbrew bietet einen I<self-upgrade>, der bei plenv fehlt.
 
 Plenv erlaubt die Suche nach ausführbaren Kommandos und liefert mit C<plenv whence> die Liste aller Perls, die dieses Kommando kennen, perlbrew kennt solch eine Option nicht.
+
+=head2 Plugins
+
+Diese Kommandos, die perlbrew kennt und in plenv fehlen, können aber über das Plugin-System von plenv nachträglich installiert werden. Ein erstes Plugin wurde auch schon installiert: perl-build.
+
+Tatsuhiko Miyagawa hat die nützlichen perlbrew-Kommandos C<exec>, C<lib> und C<use> in jeweils einem weiteren Plugin umgesetzt. Mittels
+
+    git clone git://github.com/miyagawa/plenv-contrib.git ~/.plenv/plugins/plenv-contrib/
+
+können die Plugins installiert werden. Das perlbrew-Kommando heißt unter plenv dann aber nicht C<exec> sondern C<exec-all>. Wie bereits erwähnt, eignet sich das hervorragend für Tests. Besonders für Programme und Module, bei denen nicht feststeht unter welcher Perl-Version sie eingesetzt werden, ist der Test hilfreich. Auch die bevorstehende Migration von "internen" Projekten auf eine neuere Version ist ein mögliches Einsatzszenario.
+
+    $ plenv exec-all perl version.pl
+    5.18.1
+    ==========
+    5.018001
+    
+    5.19.3
+    ==========
+    5.019003
+
+Gleiche Perl-Versionen aber unterschiedliche Projekte bedeutet entweder unter mehreren Benutzern mit plenv arbeiten oder ein Benutzer mit dem halben CPAN für die geforderte Perl-Installation. Ein dritter Weg ist die Verwendung des C<lib>-Kommandos. Zu beachten ist dabei, dass das Modul C<local::lib> installiert sein muss.
+
+    $ plenv lib create 5.18.1@projekt1
+    Creating lib 'projekt1' for 5.18.1
+    Attempting to create directory ....
+    $ plenv use 5.18.1@projekt1
+    A sub-shell is launched with PLENV_VERSION=5.18.1 and local::lib activated for @projekt1. Run 'exit' to finish it
+    $ cpanm Mojolicious
+    ... # install Mojolicious
+    $ perl -MMojolicious -e 1
+    $ exit
+    $ plenv lib create 5.18.1@projekt2
+    Creating lib 'projekt1' for 5.18.1
+    Attempting to create directory ....
+    $ plenv use 5.18.1@projekt2
+    A sub-shell is launched with PLENV_VERSION=5.18.1 and local::lib activated for @projekt2. Run 'exit' to finish it
+    $ perl -MMojolicious -e 1
+    Can't locate Mojolicious.pm in @INC (...)
+
+Allerdings ist es nicht möglich, in der I<.perl-version>-Datei eine Versionsangabe á la C<5.18.1@projekt1> festzulegen. Da wird hoffentlich noch nachgebessert.
+
+=head3 Eigene Plugins
+
+Sollten die bisher gezeigten Kommandos nicht ausreichen, ist es möglich, eigene Plugins zu schreiben. Hier wird zum einen das Kommando C<cpan-reporter> als Bash-Skript und das Kommando C<list-inc> als Perl-Skript umgesetzt.
+
+Das C<cpan-reporter>-Kommando installiert in jeder mit plenv installierten Perl-Version I<cpanm> und C<App::cpanminus::reporter> und startet den setup-Vorgang. Damit kann man bei der Verwendung von plenv auch schnell noch etwas Gutes für die Perl-Community machen.
+
+Das Skript für das Kommando ist sehr kurz:
+
+    #!/usr/bin/env bash
+    set -e
+    [ -n "$PLENV_DEBUG" ] && set -x
+   
+    if [ -z "$PLENV_ROOT" ]; then
+    PLENV_ROOT="${HOME}/.plenv"
+    fi
+   
+    for path in "${PLENV_ROOT}/versions/"*; do
+    if [ -d "$path" ]; then
+    curl -L http://cpanmin.us | PLENV_VERSION="${path##*/}" plenv exec perl - App::cpanminus
+        PLENV_VERSION="${path##*/}" plenv exec cpanm App::cpanminus::reporter
+        plenv rehash
+    fi
+    done
+   
+    cpanm-reporter --setup
+
+Das C<list-inc>-Kommando gibt einfach die Verzeichnisse aus, die in C<@INC> enthalten sind. Das kann für das Debugging hilfreich sein.
+
+    #!/usr/bin/env perl
+  
+    use strict;
+    use warnings;
+  
+    print $_,"\n" for @INC;
+
+Die hier gezeigten Plugins sind auch unter L<https://github.com/reneeb/plenv-plugins-foo> zu finden.
